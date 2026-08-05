@@ -128,17 +128,22 @@ async def parse_uploaded_file(file: UploadFile = File(...)):
 
 @app.post("/api/generate-storyboard")
 def generate_storyboard(req: StoryboardRequest):
-    summarizer = RAGSummarizer()
-    storyboard = summarizer.generate_storyboard(req.text, target_platform=req.target_platform)
-    
-    matrix_engine = StyleMatrixEngine()
-    scenes = storyboard.get("scenes", [])
-    for scene in scenes:
-        prompt_cfg = matrix_engine.get_diverse_prompt(scene["scene_id"], scene["visual_concept"])
-        scene.update(prompt_cfg)
-    
-    storyboard["scenes"] = scenes
-    return storyboard
+    try:
+        summarizer = RAGSummarizer()
+        storyboard = summarizer.generate_storyboard(req.text, target_platform=req.target_platform)
+        
+        matrix_engine = StyleMatrixEngine()
+        scenes = storyboard.get("scenes", [])
+        for scene in scenes:
+            visual_text = scene.get("visual_prompt", scene.get("visual_concept", "Silicon microchip processor"))
+            prompt_cfg = matrix_engine.get_diverse_prompt(scene["scene_id"], visual_text)
+            scene.update(prompt_cfg)
+        
+        storyboard["scenes"] = scenes
+        return storyboard
+    except Exception as e:
+        print(f"[Error generate_storyboard]: {e}")
+        raise HTTPException(status_code=500, detail=f"Error generating storyboard: {str(e)}")
 
 def _execute_render_job(storyboard: Dict[str, Any]):
     global render_state
@@ -245,6 +250,5 @@ def _auto_open_browser():
 if __name__ == "__main__":
     import uvicorn
     print(f"Skytech Content Engine Dashboard running at http://localhost:{settings.dashboard_port}")
-    # Open default browser automatically
     threading.Thread(target=_auto_open_browser, daemon=True).start()
     uvicorn.run("server:app", host=settings.dashboard_host, port=settings.dashboard_port)

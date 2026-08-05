@@ -85,6 +85,10 @@ function initIngestion() {
       btnGenerate.disabled = true;
       btnGenerate.textContent = "⌛ Procesando archivo...";
       const res = await fetch("/api/parse-file", { method: "POST", body: formData });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText);
+      }
       const data = await res.json();
 
       textInput.value = data.clean_text;
@@ -120,6 +124,11 @@ function initIngestion() {
         body: JSON.stringify({ text: text, target_platform: "all" })
       });
 
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText);
+      }
+
       currentStoryboard = await res.json();
       renderSceneCards(currentStoryboard.scenes);
 
@@ -149,6 +158,8 @@ function renderSceneCards(scenes) {
     const card = document.createElement("div");
     card.className = "scene-card";
 
+    const visualPromptText = scene.visual_prompt || scene.visual_concept || "";
+
     card.innerHTML = `
       <div class="scene-header">
         <span class="scene-badge">Escena #${scene.scene_id}</span>
@@ -158,6 +169,11 @@ function renderSceneCards(scenes) {
       <div>
         <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Voz en Off (Narration):</label>
         <textarea style="height: 70px; font-size: 0.85rem;" onchange="updateSceneText(${scene.scene_id}, this.value)">${scene.narration_text}</textarea>
+      </div>
+
+      <div>
+        <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Prompt Visual en Inglés (AI Image Concept):</label>
+        <textarea style="height: 60px; font-size: 0.8rem;" onchange="updateSceneVisualPrompt(${scene.scene_id}, this.value)">${visualPromptText}</textarea>
       </div>
 
       <div>
@@ -187,6 +203,14 @@ function updateSceneText(sceneId, text) {
   if (sc) sc.narration_text = text;
 }
 
+function updateSceneVisualPrompt(sceneId, promptText) {
+  const sc = currentStoryboard.scenes.find(s => s.scene_id === sceneId);
+  if (sc) {
+    sc.visual_prompt = promptText;
+    sc.visual_concept = promptText;
+  }
+}
+
 function updateSceneStyle(sceneId, styleKey) {
   const sc = currentStoryboard.scenes.find(s => s.scene_id === sceneId);
   if (sc) sc.archetype_key = styleKey;
@@ -213,6 +237,12 @@ function initStoryboardEvents() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storyboard: currentStoryboard })
       });
+      
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText);
+      }
+      
       await res.json();
 
       // Switch to studio tab & start polling progress
