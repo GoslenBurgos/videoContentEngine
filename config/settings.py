@@ -18,13 +18,16 @@ class Settings(BaseModel):
     ollama_url: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
     ollama_model: str = os.getenv("OLLAMA_MODEL", "qwen2.5:14b")
     
-    # Image Generator API
+    # Image Generator API & VRAM Settings
     comfyui_url: str = os.getenv("COMFYUI_URL", "http://localhost:8188")
     sd_webui_url: str = os.getenv("SD_WEBUI_URL", "http://localhost:7860")
-    default_image_engine: str = os.getenv("DEFAULT_IMAGE_ENGINE", "comfyui") # options: comfyui, sd_webui, pillow_canvas
-    
+    default_image_engine: str = os.getenv("DEFAULT_IMAGE_ENGINE", "local_diffusers")
+    diffusion_model_id: str = os.getenv("DIFFUSION_MODEL_ID", "stabilityai/sdxl-turbo")
+    enable_cuda_offload: bool = True
+    api_timeout_seconds: int = 45
+
     # TTS Settings
-    default_tts_engine: str = os.getenv("DEFAULT_TTS_ENGINE", "edge-tts") # options: edge-tts, kokoro
+    default_tts_engine: str = os.getenv("DEFAULT_TTS_ENGINE", "edge-tts")
     default_voice_es: str = os.getenv("DEFAULT_VOICE_ES", "es-MX-JorgeNeural")
     default_voice_en: str = os.getenv("DEFAULT_VOICE_EN", "en-US-ChristopherNeural")
     

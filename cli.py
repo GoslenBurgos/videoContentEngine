@@ -37,14 +37,14 @@ def run_pipeline(source_input: str, is_file: bool = False, target_platform: str 
     storyboard = summarizer.generate_storyboard(clean_text, target_platform=target_platform)
     print(f"-> Storyboard created: '{storyboard.get('title')}' with {len(storyboard.get('scenes', []))} scenes.")
 
-    # 3. Apply Style Matrix (Anti-Monotony Prompting)
+    # 3. Apply Style Matrix (Anti-Monotony Visual Engine)
     print("\n[3/6] Applying Dynamic Style Matrix (Anti-Monotony Visual Engine)...")
     matrix_engine = StyleMatrixEngine()
     processed_scenes = []
 
     for scene in storyboard.get("scenes", []):
         scene_id = scene["scene_id"]
-        core_concept = scene["visual_concept"]
+        core_concept = scene.get("visual_prompt", scene.get("visual_concept", "Silicon microchip hardware"))
         prompt_cfg = matrix_engine.get_diverse_prompt(scene_id, core_concept)
         scene.update(prompt_cfg)
         processed_scenes.append(scene)
