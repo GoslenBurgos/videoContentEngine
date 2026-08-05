@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skytech Content Engine | NotebookLM Local Video Studio</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      <div>
+        <h1>SKYTECH CONTENT ENGINE</h1>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">NotebookLM-Style Multi-Platform Video Pipeline</div>
+      </div>
+    </div>
+    
+    <div class="status-bar">
+      <button class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; background: rgba(56, 189, 248, 0.2); border: 1px solid var(--accent-cyan);" onclick="openFolderInExplorer()">
+        📂 Abrir Carpeta de Salida
+      </button>
+      <div class="status-badge" id="rigBadge">
+        🖥️ Skytech RTX 5060 Ti (16GB VRAM)
+      </div>
+      <div class="status-badge">
+        <span class="dot" id="ollamaDot"></span>
+        <span id="ollamaStatus">Ollama (LLM)</span>
+      </div>
+      <div class="status-badge">
+        <span class="dot" id="comfyDot"></span>
+        <span id="comfyStatus">ComfyUI / SD</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-ingest">1. Ingesta de Fuentes</button>
+      <button class="tab-btn" data-tab="tab-storyboard">2. Storyboard & Style Matrix</button>
+      <button class="tab-btn" data-tab="tab-studio">3. Reproductor & Estudio de Salida</button>
+    </div>
+
+    <!-- Tab 1: Source Ingestion -->
+    <div class="tab-panel active" id="tab-ingest">
+      <div class="glass-card">
+        <h2>📥 Ingesta de Artículos, PDFs o Notas</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+          Carga tus fuentes en PDF, Markdown, HTML o pega el texto raw a continuación. El modelo RAG extraerá automáticamente la narrativa en escenas.
+        </p>
+
+        <div style="margin-bottom: 1rem;">
+          <input type="file" id="fileInput" accept=".pdf,.md,.txt,.html" style="display: none;">
+          <button class="btn-primary" style="background: rgba(255,255,255,0.1); border: 1px dashed var(--accent-cyan);" onclick="document.getElementById('fileInput').click()">
+            📄 Seleccionar Archivo (PDF, Markdown, HTML)
+          </button>
+          <span id="fileNameDisplay" style="margin-left: 10px; color: var(--accent-cyan); font-size: 0.9rem;"></span>
+        </div>
+
+        <textarea id="rawTextInput" placeholder="Pega aquí el texto fuente o artículo..."></textarea>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+          <div style="font-size: 0.85rem; color: var(--text-muted);" id="textStats">0 caracteres | 0 palabras</div>
+          <button class="btn-primary" id="btnGenerateStoryboard">🧠 Generar Storyboard RAG</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Storyboard & Anti-Monotony Style Matrix -->
+    <div class="tab-panel" id="tab-storyboard">
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h2>🎨 Storyboard RAG & Matriz de Estilos Anti-Monotonía</h2>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              Personaliza el estilo gráfico y el encuadre por escena para evitar la monotonía visual.
+            </div>
+          </div>
+          <button class="btn-primary" id="btnTriggerRender">🎬 Iniciar Renderizado de Video</button>
+        </div>
+
+        <div class="scenes-grid" id="scenesContainer">
+          <div style="color: var(--text-muted);">No hay escenas generadas aún. Ingesta un texto en el Paso 1.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Media Player & Studio -->
+    <div class="tab-panel" id="tab-studio">
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2>🎬 Estudio de Renderizado & Reproductor Multi-Plataforma</h2>
+          <button class="btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="openFolderInExplorer()">
+            📂 Abrir Carpeta de Videos en Explorador
+          </button>
+        </div>
+        
+        <!-- Render Progress -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;">
+            <span id="renderStepText">Estado: En espera</span>
+            <span id="renderProgressPct">0%</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid var(--panel-border);">
+            <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet)); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Terminal Log -->
+        <div class="terminal-log" id="terminalLog">
+          > System initialized. Ready for video rendering job...
+        </div>
+      </div>
+
+      <!-- Side-by-side Video Player -->
+      <div class="video-grid">
+        <div class="glass-card">
+          <h2>📺 YouTube Video (16:9 Horizontal)</h2>
+          <video id="playerYoutube" controls poster="">
+            <source id="srcYoutube" src="/output/final_youtube_16x9.mp4" type="video/mp4">
+            Tu navegador no soporta reproducción MP4.
+          </video>
+        </div>
+
+        <div class="glass-card">
+          <h2>📱 Shorts / Reels (9:16 Vertical)</h2>
+          <video id="playerShorts" controls poster="">
+            <source id="srcShorts" src="/output/final_shorts_9x16.mp4" type="video/mp4">
+            Tu navegador no soporta reproducción MP4.
+          </video>
+        </div>
+      </div>
+
+      <!-- Blog Post Embed -->
+      <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2>🌐 Post para Blog (goslen.com)</h2>
+          <button class="btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="copyBlogMarkdown()">📋 Copiar Markdown</button>
+        </div>
+        <textarea id="blogMarkdownOutput" readonly style="height: 180px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"></textarea>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

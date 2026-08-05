@@ -1,0 +1,54 @@
+{
+  "visual_archetypes": {
+    "tech_minimalist": {
+      "name": "Tech Minimalist Vector",
+      "style_prompt": "Swiss graphic design style, minimalist vector illustration, clean geometric layout, isometric view, corporate tech aesthetic, muted professional palette",
+      "lighting": "Soft studio lighting, uniform diffusion",
+      "color_harmony": "Navy blue, slate gray, teal accents, white space",
+      "negative_prompt": "photorealistic, 3d render, plastic skin, clutter, over-saturated"
+    },
+    "cinematic_photo": {
+      "name": "Cinematic 35mm Photography",
+      "style_prompt": "Cinematic 35mm film photograph, shallow depth of field, natural rim light, crisp focus, rich texture, realistic proportions, anamorphic lens",
+      "lighting": "Volumetric dramatic lighting, warm golden hour fill",
+      "color_harmony": "Teal and orange color grade, film grain, subtle shadow tone",
+      "negative_prompt": "generic AI face, cartoon, illustration, low resolution, plastic render"
+    },
+    "dark_ui_blueprint": {
+      "name": "Dark Mode Tech Network",
+      "style_prompt": "Dark mode UI wireframe layout, glowing 3D node network, futuristic schematic diagram, HUD interface elements, Octane render depth",
+      "lighting": "Self-illuminated neon pathways, deep shadow contrast",
+      "color_harmony": "Dark charcoal background, cyan glow, electric violet highlights",
+      "negative_prompt": "bright daylight, hand drawn, realistic people, watercolor, messy"
+    },
+    "editorial_watercolor": {
+      "name": "Editorial Ink & Watercolor",
+      "style_prompt": "Editorial line drawing with subtle watercolor wash, hand-drawn aesthetic, fine ink detail, textured cream paper background",
+      "lighting": "Flat natural ambient light",
+      "color_harmony": "Pastel olive, indigo wash, sepia accents, off-white paper",
+      "negative_prompt": "3d render, neon, glossy metal, heavy dark shadows, digital gradient"
+    },
+    "isometric_glassmorphism": {
+      "name": "3D Isometric Glassmorphism",
+      "style_prompt": "3D isometric render, translucent frosted glass panels, soft ambient occlusion shadows, floating digital UI widgets",
+      "lighting": "Soft overhead studio softbox, subtle chromatic dispersion",
+      "color_harmony": "Semi-transparent pastel blues, frosted white, emerald highlights",
+      "negative_prompt": "2d flat drawing, messy ink, realistic photography, dark gritty"
+    },
+    "cyberpunk_macro": {
+      "name": "Hardware & Macro Tech",
+      "style_prompt": "Macro photograph of high-tech hardware circuits, glowing fiber optics, matte black metal texture, detailed micro-engineering",
+      "lighting": "Dramatic side spotlight, glowing circuit traces",
+      "color_harmony": "Matte black, electric cyan, warm copper metal",
+      "negative_prompt": "human faces, blurry text, cartoon, drawing, low contrast"
+    }
+  },
+  "camera_shots": [
+    "Macro extreme close-up of core subject",
+    "Wide establishing shot showing full architecture",
+    "Bird's-eye top-down technical view",
+    "Split-screen comparison layout",
+    "Dynamic 45-degree angle medium shot"
+  ],
+  "default_negative_prompt": "blurry, low quality, distorted text, ugly, watermarks, generic repetitive AI face, plastic skin texture"
+}
